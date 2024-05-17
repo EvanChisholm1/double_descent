@@ -28,5 +28,30 @@ class ResBlock(nn.Module):
     
         return self.relu3(out)
 
+class ResNet(nn.Module):
+    def __init__(self):
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, stride=1)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.pool1 = nn.MaxPool2d(kernel_size=2)
+        
+        self.res_layers = nn.Sequential([
+            ResBlock(64, 64, 2, 1),
+            ResBlock(64, 128, 2, 1),
+            ResBlock(128, 256, 2, 1),
+            ResBlock(256, 512, 2, 1),
+        ])
 
+        self.gap = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(in_features=512, out_features=10)
 
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.pool1(self.bn1(x))
+
+        x = self.res_layers(x)
+
+        x = self.gap(x)
+        x = torch.flatten(x, 1)
+        x = self.fc(x)
+
+        return x
