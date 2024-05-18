@@ -41,6 +41,7 @@ class ResNet(nn.Module):
         self.res_layers = nn.Sequential(
             ResBlock(64, 64, 3, 1),
             ResBlock(64, 128, 3, 1),
+            ResBlock(128, 128, 3, 1),
             ResBlock(128, 256, 3, 1),
             ResBlock(256, 512, 3, 1),
         )
