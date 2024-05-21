@@ -39,11 +39,14 @@ class ResNet(nn.Module):
         self.pool1 = nn.MaxPool2d(kernel_size=2)
         
         self.res_layers = nn.Sequential(
-            ResBlock(64, 64, 3, 1),
-            ResBlock(64, 128, 3, 1),
+            ResBlock(64,  64,  3, 1),
+            ResBlock(64,  64,  3, 1),
+            ResBlock(64,  128, 3, 1),
             ResBlock(128, 128, 3, 1),
             ResBlock(128, 256, 3, 1),
+            ResBlock(256, 256, 3, 1),
             ResBlock(256, 512, 3, 1),
+            ResBlock(512, 512, 3, 1),
         )
 
         self.gap = nn.AdaptiveAvgPool2d((1, 1))
