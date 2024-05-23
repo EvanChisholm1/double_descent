@@ -32,21 +32,23 @@ class ResBlock(nn.Module):
         return self.relu3(out)
 
 class ResNet(nn.Module):
-    def __init__(self):
+    def __init__(self, width=64):
         super(ResNet, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, stride=1)
-        self.bn1 = nn.BatchNorm2d(64)
+        self.bn1 = nn.BatchNorm2d(width)
         self.pool1 = nn.MaxPool2d(kernel_size=2)
+
+        k = width
         
         self.res_layers = nn.Sequential(
-            ResBlock(64,  64,  3, 1),
-            ResBlock(64,  64,  3, 1),
-            ResBlock(64,  128, 3, 1),
-            ResBlock(128, 128, 3, 1),
-            ResBlock(128, 256, 3, 1),
-            ResBlock(256, 256, 3, 1),
-            ResBlock(256, 512, 3, 1),
-            ResBlock(512, 512, 3, 1),
+            ResBlock(k,     k,     3, 1),
+            ResBlock(k,     k,     3, 1),
+            ResBlock(k,     2 * k, 3, 1),
+            ResBlock(2 * k, 2 * k, 3, 1),
+            ResBlock(2 * k, 4 * k, 3, 1),
+            ResBlock(4 * k, 4 * k, 3, 1),
+            ResBlock(4 * k, 8 * k, 3, 1),
+            ResBlock(8 * k, 8 * k, 3, 1),
         )
 
         self.gap = nn.AdaptiveAvgPool2d((1, 1))
