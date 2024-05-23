@@ -34,7 +34,7 @@ class ResBlock(nn.Module):
 class ResNet(nn.Module):
     def __init__(self, width=64):
         super(ResNet, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, stride=1)
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=width, kernel_size=3, stride=1)
         self.bn1 = nn.BatchNorm2d(width)
         self.pool1 = nn.MaxPool2d(kernel_size=2)
 
@@ -52,7 +52,7 @@ class ResNet(nn.Module):
         )
 
         self.gap = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(in_features=512, out_features=10)
+        self.fc = nn.Linear(in_features=8 * k, out_features=10)
 
     def forward(self, x):
         x = self.conv1(x)
