@@ -1,11 +1,12 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 class ResBlock(nn.Module):
     def __init__(self, in_channels=3, out_channels=3, kernel_size=3, stride=1):
         super(ResBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=1, stride=stride, bias=False)
-        self.bn1 = nn.BatchNorm2d(num_features=out_channels)
+        self.bn1 = nn.BatchNorm2d(num_features=in_channels)
         self.relu1 = nn.ReLU()
 
         self.conv2 = nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=kernel_size, padding=1, bias=False)
@@ -24,10 +25,11 @@ class ResBlock(nn.Module):
         
     def forward(self, x):
         shortcut = self.shortcut(x)
-        out = self.relu1(self.bn1(self.conv1(x)))
-        out = self.relu2(self.bn2(self.conv2(out)))
 
-        out = out + shortcut
+        out = F.relu(self.bn1(x))
+        out = self.conv1(out)
+        out = self.conv2(F.relu(self.bn2(out)))
+        out += shortcut
     
         return self.relu3(out)
 
